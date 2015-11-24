@@ -5,6 +5,7 @@
 
 .gradle/
 gradle/
+gradlew
 .idea/
 local.properties
 .idea/workspace.xml
