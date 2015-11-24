@@ -13,12 +13,16 @@ import android.widget.TextView;
 import com.downloader.DownloadListener;
 import com.downloader.DownloadTask;
 import com.downloader.FileDownloader;
+import com.downloader.Logcat;
+import com.downloader.com.EventBus;
 import com.timer.TimerCallback;
 import com.timer.TimerInfo;
 import com.timer.TimerManager;
 
+import java.util.Arrays;
 
-public class MainActivity extends Activity implements DownloadListener {
+
+public class MainActivity extends Activity implements DownloadListener, EventBus.EventHandler {
 
     private static final String TAG = "FileDownloader__";
     int a, b, c;
@@ -32,9 +36,40 @@ public class MainActivity extends Activity implements DownloadListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        testDownload();
+        // testDownload();
 
         //testTimer();
+
+        EventBus.get().subScribe(this, "login", "register");
+
+        testEventBus();
+    }
+
+    private void testEventBus() {
+        new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    EventBus.get().post("login", "a", "b", "c");
+
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    EventBus.get().post("register", "aa", "ba", "ca", "ca", "ca", "ca");
+                    EventBus.get().post("regist1er", "aa", "ba", "ca", "ca", "ca", "ca");
+                }
+
+            }
+        }.start();
     }
 
     TextView tvs[];
@@ -139,5 +174,10 @@ public class MainActivity extends Activity implements DownloadListener {
         //    }
         //}, 240, true);
         //
+    }
+
+    @Override
+    public void onGlobalEvent(String eventId, Object... args) {
+        Logcat.e(TAG, eventId + "->" + Arrays.toString(args));
     }
 }
